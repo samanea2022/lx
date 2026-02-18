@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>我的印尼语词库 · 智能联想</title>
+    <title>印尼语词库 · 智能联想</title>
     <style>
         * {
             margin: 0;
@@ -19,32 +19,219 @@
         }
 
         .container {
-            max-width: 800px;
+            width: 100%;
+            max-width: 1200px;
             margin: 0 auto;
         }
 
+        /* 电脑版样式 (宽度 > 768px) */
+        @media (min-width: 768px) {
+            body {
+                padding: 40px;
+            }
+
+            .header {
+                padding: 40px;
+                margin-bottom: 30px;
+            }
+
+            h1 {
+                font-size: 3em;
+                margin-bottom: 15px;
+            }
+
+            .subtitle {
+                font-size: 1.3em;
+            }
+
+            .stats {
+                padding: 20px;
+                font-size: 1.2em;
+                margin-top: 20px;
+            }
+
+            .main-panel {
+                padding: 40px;
+            }
+
+            #wordInput {
+                padding: 20px 25px;
+                font-size: 20px;
+            }
+
+            #searchBtn {
+                padding: 0 50px;
+                font-size: 18px;
+                height: auto;
+            }
+
+            .search-info {
+                padding: 15px 20px;
+                font-size: 1.1em;
+            }
+
+            .result-item {
+                padding: 20px 25px;
+                margin-bottom: 12px;
+            }
+
+            .word {
+                font-size: 1.8em;
+            }
+
+            .meaning {
+                font-size: 1.2em;
+                margin-top: 10px;
+            }
+
+            .match-badge {
+                padding: 6px 16px;
+                font-size: 1em;
+            }
+
+            .add-title {
+                font-size: 1.4em;
+            }
+
+            #newWord, #newMeaning {
+                padding: 16px 20px;
+                font-size: 18px;
+            }
+
+            #addBtn {
+                padding: 0 40px;
+                font-size: 18px;
+                height: 58px;
+            }
+
+            .footer {
+                font-size: 1em;
+                margin-top: 30px;
+            }
+        }
+
+        /* 手机版样式 (宽度 < 768px) */
+        @media (max-width: 767px) {
+            body {
+                padding: 12px;
+            }
+
+            .header {
+                padding: 20px 16px;
+                margin-bottom: 12px;
+            }
+
+            h1 {
+                font-size: 1.8em;
+                margin-bottom: 6px;
+            }
+
+            .subtitle {
+                font-size: 1em;
+                margin-bottom: 16px;
+            }
+
+            .stats {
+                padding: 12px;
+                font-size: 0.95em;
+            }
+
+            .main-panel {
+                padding: 20px 16px;
+            }
+
+            .search-box {
+                flex-wrap: wrap;
+            }
+
+            #wordInput {
+                padding: 14px 16px;
+                font-size: 16px;
+            }
+
+            #searchBtn {
+                padding: 0 24px;
+                height: 52px;
+                font-size: 16px;
+            }
+
+            .search-info {
+                padding: 12px 14px;
+                font-size: 0.9em;
+            }
+
+            .result-item {
+                padding: 16px;
+            }
+
+            .word {
+                font-size: 1.3em;
+            }
+
+            .meaning {
+                font-size: 1em;
+            }
+
+            .match-badge {
+                padding: 4px 12px;
+                font-size: 0.8em;
+            }
+
+            .add-title {
+                font-size: 1.1em;
+            }
+
+            #newWord, #newMeaning {
+                padding: 14px 16px;
+                font-size: 16px;
+            }
+
+            #addBtn {
+                padding: 14px;
+                font-size: 16px;
+            }
+
+            .footer {
+                font-size: 0.85em;
+            }
+
+            /* 超小屏幕优化 */
+            @media (max-width: 480px) {
+                .search-box {
+                    flex-direction: column;
+                }
+                #searchBtn {
+                    width: 100%;
+                }
+                .add-box {
+                    flex-direction: column;
+                }
+                #addBtn {
+                    width: 100%;
+                }
+            }
+        }
+
+        /* 通用样式 (所有设备共用) */
         .header {
             background: white;
             border-radius: 20px;
-            padding: 30px;
-            margin-bottom: 20px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
         }
 
         h1 {
             color: #1a2639;
-            margin-bottom: 10px;
-            font-size: 2.2em;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 700;
         }
 
         .subtitle {
             color: #5a6b7c;
-            font-size: 1.1em;
-            margin-bottom: 20px;
         }
 
         .stats {
-            padding: 15px;
             background: #f0f4f8;
             border-radius: 12px;
             font-weight: 500;
@@ -55,8 +242,7 @@
         .main-panel {
             background: white;
             border-radius: 20px;
-            padding: 30px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
         }
 
         .search-section {
@@ -71,12 +257,12 @@
 
         #wordInput {
             flex: 1;
-            padding: 18px 25px;
-            font-size: 18px;
+            min-width: 200px;
             border: 2px solid #e2e8f0;
             border-radius: 50px;
             transition: all 0.3s;
             background: #f8fafd;
+            -webkit-appearance: none;
         }
 
         #wordInput:focus {
@@ -87,16 +273,16 @@
         }
 
         #searchBtn {
-            padding: 0 40px;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
             border: none;
             border-radius: 50px;
-            font-size: 16px;
             font-weight: 600;
             cursor: pointer;
             transition: all 0.3s;
             box-shadow: 0 4px 15px rgba(102,126,234,0.4);
+            white-space: nowrap;
+            -webkit-tap-highlight-color: transparent;
         }
 
         #searchBtn:hover {
@@ -104,25 +290,24 @@
             box-shadow: 0 6px 20px rgba(102,126,234,0.6);
         }
 
+        #searchBtn:active {
+            transform: translateY(0);
+        }
+
         .search-info {
-            color: #5a6b7c;
-            font-size: 0.95em;
-            margin-top: 10px;
-            padding: 12px 15px;
             background: #f8fafd;
             border-radius: 12px;
             border-left: 3px solid #667eea;
+            line-height: 1.5;
+            color: #5a6b7c;
         }
 
         .results {
-            min-height: 300px;
+            min-height: 200px;
             margin-bottom: 30px;
         }
 
         .result-item {
-            display: flex;
-            align-items: center;
-            padding: 18px 20px;
             background: #f8fafd;
             border-radius: 16px;
             margin-bottom: 10px;
@@ -140,24 +325,22 @@
             border-left-color: #f6ad55;
         }
 
-        .word {
-            font-size: 1.4em;
-            font-weight: 600;
-            color: #2d3748;
-            min-width: 160px;
+        .word-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            flex-wrap: wrap;
+            gap: 8px;
         }
 
-        .meaning {
-            flex: 1;
-            color: #718096;
-            margin: 0 20px;
-            font-size: 1.1em;
+        .word {
+            font-weight: 600;
+            color: #2d3748;
         }
 
         .match-badge {
-            padding: 6px 16px;
             border-radius: 30px;
-            font-size: 0.9em;
             font-weight: 500;
             white-space: nowrap;
         }
@@ -172,16 +355,21 @@
             color: white;
         }
 
+        .meaning {
+            color: #718096;
+            line-height: 1.5;
+            word-break: break-word;
+        }
+
         .add-section {
             border-top: 2px dashed #cbd5e0;
             padding-top: 30px;
         }
 
         .add-title {
-            font-size: 1.2em;
             color: #2d3748;
-            margin-bottom: 20px;
             font-weight: 600;
+            margin-bottom: 20px;
         }
 
         .add-box {
@@ -189,38 +377,21 @@
             gap: 10px;
         }
 
-        #newWord {
-            flex: 2;
-            padding: 15px 20px;
+        #newWord, #newMeaning {
             border: 2px solid #e2e8f0;
             border-radius: 12px;
-            font-size: 16px;
             transition: all 0.3s;
+            background: #f8fafd;
+            -webkit-appearance: none;
         }
 
-        #newWord:focus {
-            outline: none;
-            border-color: #667eea;
-            box-shadow: 0 0 0 3px rgba(102,126,234,0.1);
-        }
-
-        #newMeaning {
-            flex: 3;
-            padding: 15px 20px;
-            border: 2px solid #e2e8f0;
-            border-radius: 12px;
-            font-size: 16px;
-            transition: all 0.3s;
-        }
-
-        #newMeaning:focus {
+        #newWord:focus, #newMeaning:focus {
             outline: none;
             border-color: #667eea;
             box-shadow: 0 0 0 3px rgba(102,126,234,0.1);
         }
 
         #addBtn {
-            padding: 0 30px;
             background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
             color: white;
             border: none;
@@ -229,6 +400,8 @@
             cursor: pointer;
             transition: all 0.3s;
             box-shadow: 0 4px 15px rgba(72,187,120,0.3);
+            white-space: nowrap;
+            -webkit-tap-highlight-color: transparent;
         }
 
         #addBtn:hover {
@@ -236,9 +409,12 @@
             box-shadow: 0 6px 20px rgba(72,187,120,0.4);
         }
 
+        #addBtn:active {
+            transform: translateY(0);
+        }
+
         .empty-state {
             text-align: center;
-            padding: 60px 20px;
             color: #a0aec0;
             font-style: italic;
             background: #f8fafd;
@@ -247,14 +423,12 @@
 
         .loading {
             text-align: center;
-            padding: 60px 20px;
             color: #667eea;
             font-weight: 500;
         }
 
         .error {
             text-align: center;
-            padding: 40px 20px;
             color: #e53e3e;
             background: #fff5f5;
             border-radius: 16px;
@@ -262,9 +436,23 @@
 
         .footer {
             text-align: center;
-            margin-top: 20px;
-            color: rgba(255,255,255,0.8);
-            font-size: 0.9em;
+            color: rgba(255,255,255,0.9);
+        }
+
+        /* 电脑版空状态和加载的padding */
+        @media (min-width: 768px) {
+            .empty-state, .loading, .error {
+                padding: 80px 20px;
+                font-size: 1.2em;
+            }
+        }
+
+        /* 手机版空状态和加载的padding */
+        @media (max-width: 767px) {
+            .empty-state, .loading, .error {
+                padding: 40px 16px;
+                font-size: 1em;
+            }
         }
     </style>
 
@@ -274,8 +462,8 @@
 <body>
     <div class="container">
         <div class="header">
-            <h1>📖 印尼语词库 · 智能联想</h1>
-            <div class="subtitle">用自己的单词，建立专属联想网络</div>
+            <h1>📖 印尼语词库</h1>
+            <div class="subtitle">用自己的单词，智能联想</div>
             <div class="stats" id="stats">
                 <span id="wordCount">加载词库统计...</span>
             </div>
@@ -288,26 +476,26 @@
                     <input
                         type="text"
                         id="wordInput"
-                        placeholder="输入印尼语单词... 例如: baca, makan, minum"
+                        placeholder="输入印尼语单词..."
                         autofocus
                     >
-                    <button id="searchBtn" onclick="searchWords()">🔍 联想搜索</button>
+                    <button id="searchBtn" onclick="searchWords()">搜索</button>
                 </div>
                 <div class="search-info" id="searchInfo">
-                    💡 输入单词，系统会自动匹配你背过的词
+                    💡 输入单词，自动匹配你背过的词
                 </div>
             </div>
 
             <!-- 搜索结果 -->
             <div id="results" class="results">
                 <div class="empty-state">
-                    ✨ 在上方输入单词，开始联想记忆
+                    ✨ 输入单词开始联想记忆
                 </div>
             </div>
 
-            <!-- 添加新词（只有这一个入口） -->
+            <!-- 添加新词 -->
             <div class="add-section">
-                <div class="add-title">➕ 添加新单词到词库</div>
+                <div class="add-title">➕ 添加新单词</div>
                 <div class="add-box">
                     <input type="text" id="newWord" placeholder="印尼语单词" autocomplete="off">
                     <input type="text" id="newMeaning" placeholder="意思 (可选)" autocomplete="off">
@@ -317,7 +505,7 @@
         </div>
 
         <div class="footer">
-            ⚡ 数据实时保存 · 只属于你的印尼语词库
+            ⚡ 你的专属印尼语词库
         </div>
     </div>
 
@@ -340,7 +528,7 @@
                 return;
             }
 
-            resultsDiv.innerHTML = '<div class="loading">⏳ 正在搜索词库...</div>';
+            resultsDiv.innerHTML = '<div class="loading">⏳ 搜索中...</div>';
 
             try {
                 // 第1层：包含完整单词
@@ -349,7 +537,6 @@
                     .select('*')
                     .ilike('word', `%${word}%`);
 
-                // 如果有完整匹配，只显示这些
                 if (fullMatches && fullMatches.length > 0) {
                     displayResults(fullMatches, 'full', word);
                     searchInfo.innerHTML = `✅ 找到 ${fullMatches.length} 个包含 "${word}" 的单词`;
@@ -389,9 +576,9 @@
                 // 完全没找到
                 resultsDiv.innerHTML = `
                     <div class="empty-state">
-                        😢 词库里还没有包含相关字母的单词<br>
-                        <small style="color: #a0aec0; margin-top: 15px; display: block;">
-                            点击下方"添加新单词"把它加入你的词库
+                        😢 词库里没有相关单词<br>
+                        <small style="color: #a0aec0; margin-top: 12px; display: block;">
+                            点击下方"添加新单词"加入你的词库
                         </small>
                     </div>
                 `;
@@ -407,7 +594,7 @@
         function displayResults(words, matchType, matchedPattern) {
             const resultsDiv = document.getElementById('results');
 
-            // 按单词长度排序（短的在前）
+            // 按单词长度排序
             const sorted = words.sort((a, b) => a.word.length - b.word.length);
 
             let html = '';
@@ -415,11 +602,13 @@
                 const isPartial = matchType === 'partial';
                 html += `
                     <div class="result-item ${isPartial ? 'partial-match' : ''}">
-                        <span class="word">${item.word}</span>
-                        <span class="meaning">${item.meaning || '—'}</span>
-                        <span class="match-badge ${isPartial ? 'partial' : 'full'}">
-                            ${isPartial ? '近似' : '完全匹配'}
-                        </span>
+                        <div class="word-row">
+                            <span class="word">${item.word}</span>
+                            <span class="match-badge ${isPartial ? 'partial' : 'full'}">
+                                ${isPartial ? '近似' : '完全匹配'}
+                            </span>
+                        </div>
+                        <div class="meaning">${item.meaning || '—'}</div>
                     </div>
                 `;
             });
@@ -440,14 +629,12 @@
                 return;
             }
 
-            // 简单的单词格式验证
             if (!/^[a-z]+$/.test(word)) {
                 alert('单词只能包含小写字母');
                 return;
             }
 
             try {
-                // 检查是否已存在
                 const { data: existing, error: checkError } = await db
                     .from('my_words')
                     .select('word')
@@ -460,7 +647,6 @@
                     return;
                 }
 
-                // 插入新词
                 const { error: insertError } = await db
                     .from('my_words')
                     .insert([
@@ -472,16 +658,12 @@
 
                 if (insertError) throw insertError;
 
-                // 清空输入
                 wordInput.value = '';
                 meaningInput.value = '';
 
                 alert('✅ 添加成功！');
-
-                // 更新统计
                 loadStats();
 
-                // 如果当前搜索框是这个词，自动搜索
                 const searchWord = document.getElementById('wordInput').value.trim().toLowerCase();
                 if (searchWord === word) {
                     searchWords();
@@ -503,8 +685,7 @@
                 if (error) throw error;
 
                 document.getElementById('wordCount').innerHTML =
-                    `📊 当前词库: <strong>${count || 0}</strong> 个单词 | ` +
-                    `🕒 最后更新: ${new Date().toLocaleTimeString()}`;
+                    `📊 词库: <strong>${count || 0}</strong> 个单词`;
 
             } catch (error) {
                 document.getElementById('wordCount').innerHTML = '📊 加载失败';
@@ -516,8 +697,7 @@
         window.addEventListener('load', function() {
             loadStats();
 
-            // // 自动搜索默认词
-            // setTimeout(searchWords, 300);
+            // 自动搜索已关闭，需要手动点击搜索或按回车
         });
 
         // 回车搜索
