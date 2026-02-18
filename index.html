@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>我的印尼语词库 · 智能联想</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+        }
+
+        h1 {
+            color: #1a2639;
+            margin-bottom: 10px;
+            font-size: 2.2em;
+        }
+
+        .subtitle {
+            color: #5a6b7c;
+            font-size: 1.1em;
+            margin-bottom: 20px;
+        }
+
+        .stats {
+            padding: 15px;
+            background: #f0f4f8;
+            border-radius: 12px;
+            font-weight: 500;
+            color: #2d3748;
+            border-left: 4px solid #667eea;
+        }
+
+        .main-panel {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+        }
+
+        .search-section {
+            margin-bottom: 30px;
+        }
+
+        .search-box {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        #wordInput {
+            flex: 1;
+            padding: 18px 25px;
+            font-size: 18px;
+            border: 2px solid #e2e8f0;
+            border-radius: 50px;
+            transition: all 0.3s;
+            background: #f8fafd;
+        }
+
+        #wordInput:focus {
+            outline: none;
+            border-color: #667eea;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(102,126,234,0.1);
+        }
+
+        #searchBtn {
+            padding: 0 40px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(102,126,234,0.4);
+        }
+
+        #searchBtn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102,126,234,0.6);
+        }
+
+        .search-info {
+            color: #5a6b7c;
+            font-size: 0.95em;
+            margin-top: 10px;
+            padding: 12px 15px;
+            background: #f8fafd;
+            border-radius: 12px;
+            border-left: 3px solid #667eea;
+        }
+
+        .results {
+            min-height: 300px;
+            margin-bottom: 30px;
+        }
+
+        .result-item {
+            display: flex;
+            align-items: center;
+            padding: 18px 20px;
+            background: #f8fafd;
+            border-radius: 16px;
+            margin-bottom: 10px;
+            border-left: 4px solid #667eea;
+            transition: all 0.2s;
+        }
+
+        .result-item:hover {
+            background: #edf2f9;
+            transform: translateX(5px);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        .result-item.partial-match {
+            border-left-color: #f6ad55;
+        }
+
+        .word {
+            font-size: 1.4em;
+            font-weight: 600;
+            color: #2d3748;
+            min-width: 160px;
+        }
+
+        .meaning {
+            flex: 1;
+            color: #718096;
+            margin: 0 20px;
+            font-size: 1.1em;
+        }
+
+        .match-badge {
+            padding: 6px 16px;
+            border-radius: 30px;
+            font-size: 0.9em;
+            font-weight: 500;
+            white-space: nowrap;
+        }
+
+        .match-badge.full {
+            background: #667eea;
+            color: white;
+        }
+
+        .match-badge.partial {
+            background: #f6ad55;
+            color: white;
+        }
+
+        .add-section {
+            border-top: 2px dashed #cbd5e0;
+            padding-top: 30px;
+        }
+
+        .add-title {
+            font-size: 1.2em;
+            color: #2d3748;
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+
+        .add-box {
+            display: flex;
+            gap: 10px;
+        }
+
+        #newWord {
+            flex: 2;
+            padding: 15px 20px;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+
+        #newWord:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102,126,234,0.1);
+        }
+
+        #newMeaning {
+            flex: 3;
+            padding: 15px 20px;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+
+        #newMeaning:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102,126,234,0.1);
+        }
+
+        #addBtn {
+            padding: 0 30px;
+            background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(72,187,120,0.3);
+        }
+
+        #addBtn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(72,187,120,0.4);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #a0aec0;
+            font-style: italic;
+            background: #f8fafd;
+            border-radius: 16px;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 60px 20px;
+            color: #667eea;
+            font-weight: 500;
+        }
+
+        .error {
+            text-align: center;
+            padding: 40px 20px;
+            color: #e53e3e;
+            background: #fff5f5;
+            border-radius: 16px;
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 20px;
+            color: rgba(255,255,255,0.8);
+            font-size: 0.9em;
+        }
+    </style>
+
+    <!-- Supabase JS -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📖 印尼语词库 · 智能联想</h1>
+            <div class="subtitle">用自己的单词，建立专属联想网络</div>
+            <div class="stats" id="stats">
+                <span id="wordCount">加载词库统计...</span>
+            </div>
+        </div>
+
+        <div class="main-panel">
+            <!-- 搜索区 -->
+            <div class="search-section">
+                <div class="search-box">
+                    <input
+                        type="text"
+                        id="wordInput"
+                        placeholder="输入印尼语单词... 例如: baca, makan, minum"
+                        autofocus
+                    >
+                    <button id="searchBtn" onclick="searchWords()">🔍 联想搜索</button>
+                </div>
+                <div class="search-info" id="searchInfo">
+                    💡 输入单词，系统会自动匹配你背过的词
+                </div>
+            </div>
+
+            <!-- 搜索结果 -->
+            <div id="results" class="results">
+                <div class="empty-state">
+                    ✨ 在上方输入单词，开始联想记忆
+                </div>
+            </div>
+
+            <!-- 添加新词（只有这一个入口） -->
+            <div class="add-section">
+                <div class="add-title">➕ 添加新单词到词库</div>
+                <div class="add-box">
+                    <input type="text" id="newWord" placeholder="印尼语单词" autocomplete="off">
+                    <input type="text" id="newMeaning" placeholder="意思 (可选)" autocomplete="off">
+                    <button id="addBtn" onclick="addWord()">添加</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer">
+            ⚡ 数据实时保存 · 只属于你的印尼语词库
+        </div>
+    </div>
+
+    <script>
+        // ========== 初始化数据库连接 ==========
+        const db = window.supabase.createClient(
+            'https://bnsbjgyulputgmqixjzs.supabase.co',  // 替换为你的URL
+            'sb_publishable_AMpdOLRMYhtY32EbVrhEUg_d58mXmte'                    // 替换为你的anon key
+        );
+
+        // ========== 核心搜索函数 ==========
+        async function searchWords() {
+            const input = document.getElementById('wordInput');
+            const word = input.value.trim().toLowerCase();
+            const resultsDiv = document.getElementById('results');
+            const searchInfo = document.getElementById('searchInfo');
+
+            if (!word) {
+                alert('请输入单词');
+                return;
+            }
+
+            resultsDiv.innerHTML = '<div class="loading">⏳ 正在搜索词库...</div>';
+
+            try {
+                // 第1层：包含完整单词
+                const { data: fullMatches } = await db
+                    .from('my_words')
+                    .select('*')
+                    .ilike('word', `%${word}%`);
+
+                // 如果有完整匹配，只显示这些
+                if (fullMatches && fullMatches.length > 0) {
+                    displayResults(fullMatches, 'full', word);
+                    searchInfo.innerHTML = `✅ 找到 ${fullMatches.length} 个包含 "${word}" 的单词`;
+                    return;
+                }
+
+                // 第2层：去掉最后一个字母
+                const layer2Pattern = word.slice(0, -1);
+                if (layer2Pattern.length >= 2) {
+                    const { data: layer2Matches } = await db
+                        .from('my_words')
+                        .select('*')
+                        .ilike('word', `%${layer2Pattern}%`);
+
+                    if (layer2Matches && layer2Matches.length > 0) {
+                        displayResults(layer2Matches, 'partial', layer2Pattern);
+                        searchInfo.innerHTML = `🔍 未找到 "${word}"，这是包含 "${layer2Pattern}" 的近似结果`;
+                        return;
+                    }
+                }
+
+                // 第3层：去掉第一个字母
+                const layer3Pattern = word.slice(1);
+                if (layer3Pattern.length >= 2) {
+                    const { data: layer3Matches } = await db
+                        .from('my_words')
+                        .select('*')
+                        .ilike('word', `%${layer3Pattern}%`);
+
+                    if (layer3Matches && layer3Matches.length > 0) {
+                        displayResults(layer3Matches, 'partial', layer3Pattern);
+                        searchInfo.innerHTML = `🔍 未找到 "${word}"，这是包含 "${layer3Pattern}" 的近似结果`;
+                        return;
+                    }
+                }
+
+                // 完全没找到
+                resultsDiv.innerHTML = `
+                    <div class="empty-state">
+                        😢 词库里还没有包含相关字母的单词<br>
+                        <small style="color: #a0aec0; margin-top: 15px; display: block;">
+                            点击下方"添加新单词"把它加入你的词库
+                        </small>
+                    </div>
+                `;
+                searchInfo.innerHTML = '❌ 未找到任何匹配';
+
+            } catch (error) {
+                resultsDiv.innerHTML = `<div class="error">❌ 搜索失败: ${error.message}</div>`;
+                console.error('搜索错误:', error);
+            }
+        }
+
+        // ========== 显示结果 ==========
+        function displayResults(words, matchType, matchedPattern) {
+            const resultsDiv = document.getElementById('results');
+
+            // 按单词长度排序（短的在前）
+            const sorted = words.sort((a, b) => a.word.length - b.word.length);
+
+            let html = '';
+            sorted.forEach(item => {
+                const isPartial = matchType === 'partial';
+                html += `
+                    <div class="result-item ${isPartial ? 'partial-match' : ''}">
+                        <span class="word">${item.word}</span>
+                        <span class="meaning">${item.meaning || '—'}</span>
+                        <span class="match-badge ${isPartial ? 'partial' : 'full'}">
+                            ${isPartial ? '近似' : '完全匹配'}
+                        </span>
+                    </div>
+                `;
+            });
+
+            resultsDiv.innerHTML = html;
+        }
+
+        // ========== 添加新词 ==========
+        async function addWord() {
+            const wordInput = document.getElementById('newWord');
+            const meaningInput = document.getElementById('newMeaning');
+
+            const word = wordInput.value.trim().toLowerCase();
+            const meaning = meaningInput.value.trim();
+
+            if (!word) {
+                alert('请输入单词');
+                return;
+            }
+
+            // 简单的单词格式验证
+            if (!/^[a-z]+$/.test(word)) {
+                alert('单词只能包含小写字母');
+                return;
+            }
+
+            try {
+                // 检查是否已存在
+                const { data: existing, error: checkError } = await db
+                    .from('my_words')
+                    .select('word')
+                    .eq('word', word);
+
+                if (checkError) throw checkError;
+
+                if (existing && existing.length > 0) {
+                    alert('这个单词已存在！');
+                    return;
+                }
+
+                // 插入新词
+                const { error: insertError } = await db
+                    .from('my_words')
+                    .insert([
+                        {
+                            word: word,
+                            meaning: meaning || null
+                        }
+                    ]);
+
+                if (insertError) throw insertError;
+
+                // 清空输入
+                wordInput.value = '';
+                meaningInput.value = '';
+
+                alert('✅ 添加成功！');
+
+                // 更新统计
+                loadStats();
+
+                // 如果当前搜索框是这个词，自动搜索
+                const searchWord = document.getElementById('wordInput').value.trim().toLowerCase();
+                if (searchWord === word) {
+                    searchWords();
+                }
+
+            } catch (error) {
+                alert('添加失败: ' + error.message);
+                console.error('添加错误:', error);
+            }
+        }
+
+        // ========== 加载统计 ==========
+        async function loadStats() {
+            try {
+                const { count, error } = await db
+                    .from('my_words')
+                    .select('*', { count: 'exact', head: true });
+
+                if (error) throw error;
+
+                document.getElementById('wordCount').innerHTML =
+                    `📊 当前词库: <strong>${count || 0}</strong> 个单词 | ` +
+                    `🕒 最后更新: ${new Date().toLocaleTimeString()}`;
+
+            } catch (error) {
+                document.getElementById('wordCount').innerHTML = '📊 加载失败';
+                console.error('统计错误:', error);
+            }
+        }
+
+        // ========== 初始化 ==========
+        window.addEventListener('load', function() {
+            loadStats();
+
+            // // 自动搜索默认词
+            // setTimeout(searchWords, 300);
+        });
+
+        // 回车搜索
+        document.getElementById('wordInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') searchWords();
+        });
+
+        // 回车添加
+        document.getElementById('newMeaning').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') addWord();
+        });
+    </script>
+</body>
+</html>
