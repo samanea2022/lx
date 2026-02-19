@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>印尼语词库 · 智能联想</title>
+    <title>印尼语词库 · 智能双语搜索</title>
     <style>
         * {
             margin: 0;
@@ -87,6 +87,11 @@
             .match-badge {
                 padding: 6px 16px;
                 font-size: 1em;
+            }
+
+            .search-mode-badge {
+                font-size: 1em;
+                padding: 8px 16px;
             }
 
             .add-title {
@@ -177,6 +182,11 @@
                 font-size: 0.8em;
             }
 
+            .search-mode-badge {
+                font-size: 0.85em;
+                padding: 4px 10px;
+            }
+
             .add-title {
                 font-size: 1.1em;
             }
@@ -212,7 +222,7 @@
             }
         }
 
-        /* 通用样式 (所有设备共用) */
+        /* 通用样式 */
         .header {
             background: white;
             border-radius: 20px;
@@ -253,6 +263,7 @@
             display: flex;
             gap: 10px;
             margin-bottom: 15px;
+            position: relative;
         }
 
         #wordInput {
@@ -300,6 +311,18 @@
             border-left: 3px solid #667eea;
             line-height: 1.5;
             color: #5a6b7c;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .search-mode-badge {
+            background: #e2e8f0;
+            border-radius: 30px;
+            color: #2d3748;
+            font-weight: 500;
         }
 
         .results {
@@ -463,7 +486,7 @@
     <div class="container">
         <div class="header">
             <h1>📖 印尼语词库</h1>
-            <div class="subtitle">用自己的单词，智能联想</div>
+            <div class="subtitle">智能识别 · 搜单词或搜释义</div>
             <div class="stats" id="stats">
                 <span id="wordCount">加载词库统计...</span>
             </div>
@@ -476,20 +499,21 @@
                     <input
                         type="text"
                         id="wordInput"
-                        placeholder="输入印尼语单词..."
+                        placeholder="输入印尼语单词 或 中文关键词..."
                         autofocus
                     >
                     <button id="searchBtn" onclick="searchWords()">搜索</button>
                 </div>
                 <div class="search-info" id="searchInfo">
-                    💡 输入单词，自动匹配你背过的词
+                    <span>💡 自动识别：字母搜单词，中文搜释义</span>
+                    <span class="search-mode-badge" id="modeBadge">🔤 单词模式</span>
                 </div>
             </div>
 
             <!-- 搜索结果 -->
             <div id="results" class="results">
                 <div class="empty-state">
-                    ✨ 输入单词开始联想记忆
+                    ✨ 输入单词或中文开始搜索
                 </div>
             </div>
 
@@ -505,7 +529,7 @@
         </div>
 
         <div class="footer">
-            ⚡ 你的专属印尼语词库
+            ⚡ 你的专属印尼语词库 · 智能双语搜索
         </div>
     </div>
 
@@ -516,73 +540,183 @@
             'sb_publishable_AMpdOLRMYhtY32EbVrhEUg_d58mXmte'                    // 替换为你的anon key
         );
 
-        // ========== 核心搜索函数 ==========
+        // ========== 检测搜索模式 ==========
+        function detectSearchMode(query) {
+            // 纯字母（包括空格）-> 搜单词
+            if (/^[a-z\s]+$/.test(query.toLowerCase())) {
+                return 'word';
+            }
+            // 包含非字母（中文、标点等）-> 搜释义
+            else {
+                return 'meaning';
+            }
+        }
+
+        // ========== 更新模式徽章（修复显示版）==========
+        // ========== 更新模式徽章（动态创建版）==========
+        function updateModeBadge(mode) {
+            const searchInfo = document.getElementById('searchInfo');
+
+            if (!searchInfo) return;
+
+            // 查找或创建模式徽章
+            let badge = document.getElementById('modeBadge');
+
+            if (!badge) {
+                // 如果不存在，就创建一个
+                badge = document.createElement('span');
+                badge.id = 'modeBadge';
+                badge.className = 'search-mode-badge';
+                searchInfo.appendChild(badge);
+            }
+
+            // 设置样式和内容
+            badge.style.padding = '4px 12px';
+            badge.style.borderRadius = '30px';
+            badge.style.fontWeight = '500';
+            badge.style.display = 'inline-block';
+
+            if (mode === 'word') {
+                badge.innerHTML = '🔤 单词模式';
+                badge.style.background = '#e3f2fd';
+                badge.style.color = '#0d47a1';
+            } else {
+                badge.innerHTML = '🔍 释义模式';
+                badge.style.background = '#fff3e0';
+                badge.style.color = '#b85c00';
+            }
+        }
+
+        // ========== 输入时实时更新模式（修复版）==========
+        document.getElementById('wordInput').addEventListener('input', function(e) {
+            const query = e.target.value.trim().toLowerCase();
+            const badge = document.getElementById('modeBadge');
+
+            if (!badge) return;
+
+            if (query) {
+                const mode = detectSearchMode(query);
+                if (mode === 'word') {
+                    badge.innerHTML = '🔤 单词模式';
+                    badge.style.background = '#e3f2fd';
+                    badge.style.color = '#0d47a1';
+                    badge.style.padding = '4px 12px';
+                    badge.style.borderRadius = '30px';
+                } else {
+                    badge.innerHTML = '🔍 释义模式';
+                    badge.style.background = '#fff3e0';
+                    badge.style.color = '#b85c00';
+                    badge.style.padding = '4px 12px';
+                    badge.style.borderRadius = '30px';
+                }
+            } else {
+                // 输入为空时显示默认
+                badge.innerHTML = '🔤 单词模式';
+                badge.style.background = '#e2e8f0';
+                badge.style.color = '#2d3748';
+                badge.style.padding = '4px 12px';
+                badge.style.borderRadius = '30px';
+            }
+        });
+
+        // ========== 核心搜索函数（修复版）==========
         async function searchWords() {
             const input = document.getElementById('wordInput');
-            const word = input.value.trim().toLowerCase();
+            const query = input.value.trim().toLowerCase();
             const resultsDiv = document.getElementById('results');
             const searchInfo = document.getElementById('searchInfo');
 
-            if (!word) {
-                alert('请输入单词');
+            if (!query) {
+                alert('请输入搜索内容');
                 return;
             }
+
+            // 检测搜索模式
+            const mode = detectSearchMode(query);
+            updateModeBadge(mode);
 
             resultsDiv.innerHTML = '<div class="loading">⏳ 搜索中...</div>';
 
             try {
-                // 第1层：包含完整单词
-                const { data: fullMatches } = await db
-                    .from('my_words')
-                    .select('*')
-                    .ilike('word', `%${word}%`);
-
-                if (fullMatches && fullMatches.length > 0) {
-                    displayResults(fullMatches, 'full', word);
-                    searchInfo.innerHTML = `✅ 找到 ${fullMatches.length} 个包含 "${word}" 的单词`;
-                    return;
-                }
-
-                // 第2层：去掉最后一个字母
-                const layer2Pattern = word.slice(0, -1);
-                if (layer2Pattern.length >= 2) {
-                    const { data: layer2Matches } = await db
+                if (mode === 'word') {
+                    // ========== 单词搜索模式 ==========
+                    // 第1层：包含完整单词
+                    const { data: fullMatches } = await db
                         .from('my_words')
                         .select('*')
-                        .ilike('word', `%${layer2Pattern}%`);
+                        .ilike('word', `%${query}%`);
 
-                    if (layer2Matches && layer2Matches.length > 0) {
-                        displayResults(layer2Matches, 'partial', layer2Pattern);
-                        searchInfo.innerHTML = `🔍 未找到 "${word}"，这是包含 "${layer2Pattern}" 的近似结果`;
-                        return;
+                    if (fullMatches && fullMatches.length > 0) {
+                        displayResults(fullMatches, 'full', query);
+                        searchInfo.innerHTML = `✅ 找到 ${fullMatches.length} 个包含 "${query}" 的单词`;
+                        return;  // 这里 return 只是退出单词模式，不会阻止下次搜索
                     }
-                }
 
-                // 第3层：去掉第一个字母
-                const layer3Pattern = word.slice(1);
-                if (layer3Pattern.length >= 2) {
-                    const { data: layer3Matches } = await db
+                    // 第2层：去掉最后一个字母
+                    const layer2Pattern = query.slice(0, -1);
+                    if (layer2Pattern.length >= 2) {
+                        const { data: layer2Matches } = await db
+                            .from('my_words')
+                            .select('*')
+                            .ilike('word', `%${layer2Pattern}%`);
+
+                        if (layer2Matches && layer2Matches.length > 0) {
+                            displayResults(layer2Matches, 'partial', layer2Pattern);
+                            searchInfo.innerHTML = `🔍 未找到 "${query}"，这是包含 "${layer2Pattern}" 的近似结果`;
+                            return;
+                        }
+                    }
+
+                    // 第3层：去掉第一个字母
+                    const layer3Pattern = query.slice(1);
+                    if (layer3Pattern.length >= 2) {
+                        const { data: layer3Matches } = await db
+                            .from('my_words')
+                            .select('*')
+                            .ilike('word', `%${layer3Pattern}%`);
+
+                        if (layer3Matches && layer3Matches.length > 0) {
+                            displayResults(layer3Matches, 'partial', layer3Pattern);
+                            searchInfo.innerHTML = `🔍 未找到 "${query}"，这是包含 "${layer3Pattern}" 的近似结果`;
+                            return;
+                        }
+                    }
+
+                    // 单词模式没找到
+                    resultsDiv.innerHTML = `
+                        <div class="empty-state">
+                            😢 词库里没有包含 "${query}" 的单词<br>
+                            <small style="color: #a0aec0; margin-top: 12px; display: block;">
+                                试试搜中文释义，或点击下方添加新单词
+                            </small>
+                        </div>
+                    `;
+                    searchInfo.innerHTML = '❌ 未找到匹配的单词';
+
+                } else {
+                    // ========== 释义搜索模式 ==========
+                    const { data: meaningMatches, error } = await db
                         .from('my_words')
                         .select('*')
-                        .ilike('word', `%${layer3Pattern}%`);
+                        .ilike('meaning', `%${query}%`);
 
-                    if (layer3Matches && layer3Matches.length > 0) {
-                        displayResults(layer3Matches, 'partial', layer3Pattern);
-                        searchInfo.innerHTML = `🔍 未找到 "${word}"，这是包含 "${layer3Pattern}" 的近似结果`;
-                        return;
+                    if (error) throw error;
+
+                    if (meaningMatches && meaningMatches.length > 0) {
+                        displayMeaningResults(meaningMatches, query);
+                        searchInfo.innerHTML = `✅ 找到 ${meaningMatches.length} 个包含 "${query}" 的单词`;
+                    } else {
+                        resultsDiv.innerHTML = `
+                            <div class="empty-state">
+                                😢 没找到释义包含 "${query}" 的单词<br>
+                                <small style="color: #a0aec0; margin-top: 12px; display: block;">
+                                    试试其他关键词，或点击下方添加新单词
+                                </small>
+                            </div>
+                        `;
+                        searchInfo.innerHTML = '❌ 未找到匹配的释义';
                     }
                 }
-
-                // 完全没找到
-                resultsDiv.innerHTML = `
-                    <div class="empty-state">
-                        😢 词库里没有相关单词<br>
-                        <small style="color: #a0aec0; margin-top: 12px; display: block;">
-                            点击下方"添加新单词"加入你的词库
-                        </small>
-                    </div>
-                `;
-                searchInfo.innerHTML = '❌ 未找到任何匹配';
 
             } catch (error) {
                 resultsDiv.innerHTML = `<div class="error">❌ 搜索失败: ${error.message}</div>`;
@@ -590,7 +724,7 @@
             }
         }
 
-        // ========== 显示结果 ==========
+        // ========== 显示单词搜索结果 ==========
         function displayResults(words, matchType, matchedPattern) {
             const resultsDiv = document.getElementById('results');
 
@@ -609,6 +743,36 @@
                             </span>
                         </div>
                         <div class="meaning">${item.meaning || '—'}</div>
+                    </div>
+                `;
+            });
+
+            resultsDiv.innerHTML = html;
+        }
+
+        // ========== 显示释义搜索结果 ==========
+        function displayMeaningResults(words, keyword) {
+            const resultsDiv = document.getElementById('results');
+
+            // 按单词长度排序
+            const sorted = words.sort((a, b) => a.word.length - b.word.length);
+
+            let html = '';
+            sorted.forEach(item => {
+                // 高亮显示匹配的关键词
+                const highlightedMeaning = item.meaning ?
+                    item.meaning.replace(new RegExp(keyword, 'gi'), match => `<mark style="background: #fff3e0; color: #b85c00; padding: 2px 0;">${match}</mark>`)
+                    : '—';
+
+                html += `
+                    <div class="result-item">
+                        <div class="word-row">
+                            <span class="word">${item.word}</span>
+                            <span class="match-badge partial" style="background: #f6ad55; color: white;">
+                                释义匹配
+                            </span>
+                        </div>
+                        <div class="meaning">${highlightedMeaning}</div>
                     </div>
                 `;
             });
@@ -664,11 +828,6 @@
                 alert('✅ 添加成功！');
                 loadStats();
 
-                const searchWord = document.getElementById('wordInput').value.trim().toLowerCase();
-                if (searchWord === word) {
-                    searchWords();
-                }
-
             } catch (error) {
                 alert('添加失败: ' + error.message);
                 console.error('添加错误:', error);
@@ -693,11 +852,23 @@
             }
         }
 
+        // ========== 输入时实时更新模式 ==========
+        document.getElementById('wordInput').addEventListener('input', function(e) {
+            const query = e.target.value.trim().toLowerCase();
+            if (query) {
+                const mode = detectSearchMode(query);
+                updateModeBadge(mode);
+            } else {
+                // 输入为空时显示默认
+                document.getElementById('modeBadge').innerHTML = '🔤 单词模式';
+                document.getElementById('modeBadge').style.background = '#e2e8f0';
+                document.getElementById('modeBadge').style.color = '#2d3748';
+            }
+        });
+
         // ========== 初始化 ==========
         window.addEventListener('load', function() {
             loadStats();
-
-            // 自动搜索已关闭，需要手动点击搜索或按回车
         });
 
         // 回车搜索
